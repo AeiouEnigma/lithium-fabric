@@ -94,7 +94,6 @@ public class MaskedTickingBlockEntityList<T> implements List<T> {
         int newIndex = this.firstRemovedIndex - 1;
         int lastVisible = this.filteredElementsMask.previousSetBit(newIndex);
 
-
         for (int i = newIndex + 1; i < this.allElements.size(); i++) {
             T t = this.allElements.get(i);
             if (t == null) {

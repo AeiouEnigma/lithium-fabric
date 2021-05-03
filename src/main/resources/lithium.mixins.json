@@ -6,6 +6,9 @@
   "injectors": {
     "defaultRequire": 1
   },
+  "overwrites": {
+    "conformVisibility": true
+  },
   "mixins": [
     "ai.goal.GoalSelectorMixin",
     "ai.nearby_entity_tracking.LivingEntityMixin",
@@ -18,6 +21,7 @@
     "ai.pathing.LandPathNodeMakerMixin",
     "ai.pathing.MixinAbstractBlockState",
     "ai.pathing.MixinBlock",
+    "ai.pathing.MixinBlocks",
     "ai.pathing.PathNodeNavigatorMixin",
     "ai.poi.fast_init.PointOfInterestStorageMixin",
     "ai.poi.fast_init.PointOfInterestTypeMixin",
@@ -32,6 +36,7 @@
     "ai.task.RunModeMixin$TryAllMixin",
     "ai.task.TaskMixin",
     "ai.task.WeightedListMixin",
+    "ai.task.TaskAccessorMixin",
     "alloc.chunk_random.ServerWorldMixin",
     "alloc.chunk_random.WorldMixin",
     "alloc.chunk_ticking.ChunkTicketManagerMixin",
@@ -47,6 +52,7 @@
     "alloc.world_ticking.ServerWorldMixin",
     "block.flatten_states.AbstractBlockStateMixin",
     "block.flatten_states.FluidStateMixin",
+    "block.flatten_states.FluidStateAccessorMixin",
     "block.moving_block_shapes.PistonBlockEntityMixin",
     "block.moving_block_shapes.VoxelShapeMixin",
     "cached_hashcode.BlockNeighborGroupMixin",
@@ -105,6 +111,7 @@
     "shapes.shape_merging.VoxelShapesMixin",
     "shapes.specialized_shapes.VoxelShapeMixin",
     "shapes.specialized_shapes.VoxelShapesMixin",
+    "shapes.specialized_shapes.VoxelShapeAccessorMixin",
     "tag.SetTagMixin",
     "world.block_entity_ticking.collections.WorldMixin",
     "world.block_entity_ticking.should_tick_cache.WorldMixin",
@@ -124,6 +131,7 @@
     "world.block_entity_ticking.sleeping.WorldMixin",
     "world.block_entity_ticking.support_cache.BlockEntityMixin",
     "world.block_entity_ticking.support_cache.WorldMixin",
+    "world.chunk_access.ChunkHolderAccessorMixin",
     "world.chunk_access.ChunkHolderMixin",
     "world.chunk_access.ServerChunkManagerMixin",
     "world.chunk_access.WorldMixin",
@@ -137,5 +145,6 @@
     "world.mob_spawning.StructureAccessorMixin",
     "world.player_chunk_tick.ThreadedAnvilChunkStorageMixin",
     "world.tick_scheduler.ServerWorldMixin"
-  ]
+  ],
+  "refmap": "lithium.refmap.json"
 }

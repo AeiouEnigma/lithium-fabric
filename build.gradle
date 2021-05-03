@@ -1,33 +1,70 @@
-import net.fabricmc.loom.task.RemapJarTask
-
-plugins {
-    id 'fabric-loom' version '0.5-SNAPSHOT'
-    id 'maven-publish'
+buildscript {
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven {url='https://repo.spongepowered.org/maven'}
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+    }
 }
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: "org.spongepowered.mixin"
+
+archivesBaseName = "${project.archives_base_name}-mc${project.minecraft_version}"
+version = "${project.mod_version}-build_${project.build_number}"
+group = project.maven_group
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 minecraft {
-    accessWidener = file("src/main/resources/lithium.accesswidener")
-    refmapName = "mixins.lithium.refmap.json"
+    mappings channel: "${project.mappings_channel}", version: "${project.mappings_version}"
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    runs {
+        client {
+            workingDirectory project.file('run')
+            arg "-mixin.config=lithium.mixins.json"
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+        }
+
+        server {
+            workingDirectory project.file('run')
+            arg "-mixin.config=lithium.mixins.json"
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+        }
+    }
 }
 
-apply plugin: 'fabric-loom'
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
-group = project.maven_group
-version = project.mod_version
-archivesBaseName = "${project.name}-mc${project.minecraft_version}"
-
-def build_release = System.getenv("BUILD_RELEASE") == "true"
-def build_id = System.getenv("BUILD_ID")
-
-if (!build_release) {
-    version += "-SNAPSHOT"
-}
-
-if (build_id != null) {
-    version += "+build.${build_id}"
+mixin {
+    add sourceSets.main, "${project.mod_id}.refmap.json"
 }
 
 sourceSets {
@@ -46,25 +83,10 @@ sourceSets {
 }
 
 dependencies {
-    //to change the versions see the gradle.properties file
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-
-    modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
-}
-
-processResources {
-    inputs.property "version", project.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
-
-        expand "version": project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
-    }
+    minecraft 'net.minecraftforge:forge:' + project.minecraft_version + '-' + project.forge_version
+    // mixin
+    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
+    compile 'org.jetbrains:annotations:16.0.2' //For @NotNull, used by FilterableLinkedHashSet
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
@@ -86,25 +108,45 @@ task apiJar(type: Jar) {
     from sourceSets.api.output
 }
 
-task remapApiJar(type: RemapJarTask, dependsOn: apiJar) {
-    classifier "api"
-
-    input = apiJar.archiveFile.get().asFile
-    addNestedDependencies = false
-}
-
-publishing {
-    publications {
-        main (MavenPublication) {
-            artifactId "lithium"
-            artifact(remapJar)
-        }
-
-        api (MavenPublication) {
-            artifactId "lithium-api"
-            artifact(remapApiJar)
-        }
+afterEvaluate {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xmaxerrs" << "2000"
     }
 }
 
-build.dependsOn remapApiJar
+// Example for how to get properties into the manifest for reading by the runtime..
+jar {
+    manifest {
+        attributes([
+                "Specification-Title": "${project.mod_id}",
+                //"Specification-Vendor": "examplemodsareus",
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": "${project.name}",
+                "Implementation-Version": "${version}",
+                //"Implementation-Vendor" :"examplemodsareus",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs": "${project.mod_id}.mixins.json"
+        ])
+    }
+}
+
+// Example configuration to allow publishing using the maven-publish task
+// This is the preferred method to reobfuscate your jar file
+jar.finalizedBy('reobfJar')
+// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
+//publish.dependsOn('reobfJar')
+
+apply plugin: 'org.spongepowered.mixin'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}

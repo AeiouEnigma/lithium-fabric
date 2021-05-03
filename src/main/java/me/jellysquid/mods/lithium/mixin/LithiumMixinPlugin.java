@@ -1,6 +1,5 @@
 package me.jellysquid.mods.lithium.mixin;
 
-import me.jellysquid.mods.lithium.common.LithiumMod;
 import me.jellysquid.mods.lithium.common.config.LithiumConfig;
 import me.jellysquid.mods.lithium.common.config.Option;
 import org.apache.logging.log4j.LogManager;
@@ -13,25 +12,23 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 public class LithiumMixinPlugin implements IMixinConfigPlugin {
     private static final String MIXIN_PACKAGE_ROOT = "me.jellysquid.mods.lithium.mixin.";
 
     private final Logger logger = LogManager.getLogger("Lithium");
-
     private LithiumConfig config;
 
     @Override
     public void onLoad(String mixinPackage) {
         try {
-            this.config = LithiumConfig.load(new File("./config/lithium.properties"));
+            this.config = LithiumConfig.load(new File("./config/lithium-mixins.properties"));
         } catch (Exception e) {
             throw new RuntimeException("Could not load configuration file for Lithium", e);
         }
 
         this.logger.info("Loaded configuration file for Lithium: {} options available, {} override(s) found",
                 this.config.getOptionCount(), this.config.getOptionOverrideCount());
-
-        LithiumMod.CONFIG = this.config;
     }
 
     @Override
@@ -77,7 +74,6 @@ public class LithiumMixinPlugin implements IMixinConfigPlugin {
 
         return option.isEnabled();
     }
-
     @Override
     public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
 

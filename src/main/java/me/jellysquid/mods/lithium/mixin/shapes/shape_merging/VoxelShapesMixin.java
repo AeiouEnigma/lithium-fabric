@@ -2,8 +2,8 @@ package me.jellysquid.mods.lithium.mixin.shapes.shape_merging;
 
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import me.jellysquid.mods.lithium.common.shapes.pairs.LithiumDoublePairList;
-import net.minecraft.util.shape.PairList;
-import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.util.math.shapes.IDoubleListMerger;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,15 +15,15 @@ public class VoxelShapesMixin {
      * Replaces the returned list pair with our own optimized type.
      */
     @Inject(
-            method = "createListPair",
+            method = "makeListMerger",
             at = @At(
-                    shift = At.Shift.BEFORE,
                     value = "NEW",
-                    target = "net/minecraft/util/shape/SimplePairList"
+                    target = "net/minecraft/util/math/shapes/IndirectMerger",
+                    shift = At.Shift.BEFORE
             ),
             cancellable = true
     )
-    private static void injectCustomListPair(int size, DoubleList a, DoubleList b, boolean flag1, boolean flag2, CallbackInfoReturnable<PairList> cir) {
+    private static void injectCustomListPair(int size, DoubleList a, DoubleList b, boolean flag1, boolean flag2, CallbackInfoReturnable<IDoubleListMerger> cir) {
         cir.setReturnValue(new LithiumDoublePairList(a, b, flag1, flag2));
     }
 }

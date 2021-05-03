@@ -1,10 +1,5 @@
 package me.jellysquid.mods.lithium.common.config;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-import net.fabricmc.loader.api.metadata.CustomValue;
-import net.fabricmc.loader.api.metadata.CustomValue.CvType;
-import net.fabricmc.loader.api.metadata.ModMetadata;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +26,7 @@ public class LithiumConfig {
         this.addMixinRule("ai", true);
         this.addMixinRule("ai.goal", true);
         this.addMixinRule("ai.nearby_entity_tracking", true);
-        this.addMixinRule("ai.nearby_entity_tracking.goals", true);
+        this.addMixinRule("ai.nearby_entity_tracking.goals", false); //Compatibility issues
         this.addMixinRule("ai.pathing", true);
         this.addMixinRule("ai.poi", true);
         this.addMixinRule("ai.poi.fast_init", true);
@@ -82,7 +77,7 @@ public class LithiumConfig {
         this.addMixinRule("gen.cached_generator_settings", true);
         this.addMixinRule("gen.chunk_region", true);
         this.addMixinRule("gen.fast_island_noise", true);
-        this.addMixinRule("gen.fast_layer_sampling", true);
+        this.addMixinRule("gen.fast_layer_sampling", false); //Disabled, causes chunk wall boundaries when loading vanilla saves. Forge-exclusive issue
         this.addMixinRule("gen.fast_multi_source_biomes", true);
         this.addMixinRule("gen.fast_noise_interpolation", true);
         this.addMixinRule("gen.features", true);
@@ -106,7 +101,7 @@ public class LithiumConfig {
 
         this.addMixinRule("world", true);
         this.addMixinRule("world.block_entity_ticking", true);
-        this.addMixinRule("world.block_entity_ticking.collections", true);
+        this.addMixinRule("world.block_entity_ticking.collections", false); //Seems not to vibe with other mods
         this.addMixinRule("world.block_entity_ticking.should_tick_cache", true);
         this.addMixinRule("world.block_entity_ticking.sleeping", true);
         this.addMixinRule("world.block_entity_ticking.support_cache", true);
@@ -116,17 +111,16 @@ public class LithiumConfig {
         this.addMixinRule("world.chunk_tickets", true);
         this.addMixinRule("world.chunk_ticking", true);
         this.addMixinRule("world.explosions", true);
-        this.addMixinRule("world.mob_spawning", true);
+        this.addMixinRule("world.mob_spawning", false); //Mod incompatibility issue?
         this.addMixinRule("world.player_chunk_tick", true);
         this.addMixinRule("world.tick_scheduler", true);
     }
 
     /**
      * Defines a Mixin rule which can be configured by users and other mods.
-     *
-     * @param mixin   The name of the mixin package which will be controlled by this rule
-     * @param enabled True if the rule will be enabled by default, otherwise false
      * @throws IllegalStateException If a rule with that name already exists
+     * @param mixin The name of the mixin package which will be controlled by this rule
+     * @param enabled True if the rule will be enabled by default, otherwise false
      */
     private void addMixinRule(String mixin, boolean enabled) {
         String name = getMixinRuleName(mixin);
@@ -160,50 +154,6 @@ public class LithiumConfig {
             }
 
             option.setEnabled(enabled, true);
-        }
-    }
-
-    private void applyModOverrides() {
-        for (ModContainer container : FabricLoader.getInstance().getAllMods()) {
-            ModMetadata meta = container.getMetadata();
-
-            if (meta.containsCustomValue(JSON_KEY_LITHIUM_OPTIONS)) {
-                CustomValue overrides = meta.getCustomValue(JSON_KEY_LITHIUM_OPTIONS);
-
-                if (overrides.getType() != CvType.OBJECT) {
-                    LOGGER.warn("Mod '{}' contains invalid Lithium option overrides, ignoring", meta.getId());
-                    continue;
-                }
-
-                for (Map.Entry<String, CustomValue> entry : overrides.getAsObject()) {
-                    this.applyModOverride(meta, entry.getKey(), entry.getValue());
-                }
-            }
-        }
-    }
-
-    private void applyModOverride(ModMetadata meta, String name, CustomValue value) {
-        Option option = this.options.get(name);
-
-        if (option == null) {
-            LOGGER.warn("Mod '{}' attempted to override option '{}', which doesn't exist, ignoring", meta.getId(), name);
-            return;
-        }
-
-        if (value.getType() != CvType.BOOLEAN) {
-            LOGGER.warn("Mod '{}' attempted to override option '{}' with an invalid value, ignoring", meta.getId(), name);
-            return;
-        }
-
-        boolean enabled = value.getAsBoolean();
-
-        // disabling the option takes precedence over enabling
-        if (!enabled && option.isEnabled()) {
-            option.clearModsDefiningValue();
-        }
-
-        if (!enabled || option.isEnabled() || option.getDefiningMods().isEmpty()) {
-            option.addModOverride(enabled, meta.getId());
         }
     }
 
@@ -264,8 +214,7 @@ public class LithiumConfig {
                 LOGGER.warn("Could not write default configuration file", e);
             }
         }
-
-        config.applyModOverrides();
+        //config.applyModOverrides();
 
         return config;
     }
