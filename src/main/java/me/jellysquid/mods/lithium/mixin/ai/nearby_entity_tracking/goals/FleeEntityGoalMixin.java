@@ -27,7 +27,7 @@ public class FleeEntityGoalMixin<T extends LivingEntity> {
     private void init(CreatureEntity entityIn, Class<T> avoidClass, Predicate<LivingEntity> predicate, float distance, double nearSpeedIn, double farSpeedIn, Predicate<LivingEntity> predicate2, CallbackInfo ci) {
         this.tracker = new NearbyEntityTracker<>(avoidClass, entityIn, distance);
 
-        ((NearbyEntityListenerProvider) entityIn).getListener().addListener(this.tracker);
+        ((NearbyEntityListenerProvider) entityIn).lithium$getListener().addListener(this.tracker);
     }
 
     @Redirect(

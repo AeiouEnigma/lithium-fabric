@@ -17,13 +17,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LookAtGoal.class)
 public class LookAtGoalMixin {
-    private NearbyEntityTracker<? extends LivingEntity> tracker;
+    private NearbyEntityTracker<? extends LivingEntity> lithium$tracker;
 
     @Inject(method = "<init>(Lnet/minecraft/entity/MobEntity;Ljava/lang/Class;FF)V", at = @At("RETURN"))
-    private void init(MobEntity entityIn, Class<? extends LivingEntity> watchTargetClass, float maxDistance, float chanceIn, CallbackInfo ci) {
-        this.tracker = new NearbyEntityTracker<>(watchTargetClass, entityIn, maxDistance);
+    private void lithium$init(MobEntity entityIn, Class<? extends LivingEntity> watchTargetClass, float maxDistance, float chanceIn, CallbackInfo ci) {
+        this.lithium$tracker = new NearbyEntityTracker<>(watchTargetClass, entityIn, maxDistance);
 
-        ((NearbyEntityListenerProvider) entityIn).getListener().addListener(this.tracker);
+        ((NearbyEntityListenerProvider) entityIn).lithium$getListener().addListener(this.lithium$tracker);
     }
 
     @Redirect(
@@ -33,8 +33,8 @@ public class LookAtGoalMixin {
                     target = "Lnet/minecraft/world/World;getClosestEntity(Ljava/lang/Class;Lnet/minecraft/entity/EntityPredicate;Lnet/minecraft/entity/LivingEntity;DDDLnet/minecraft/util/math/AxisAlignedBB;)Lnet/minecraft/entity/LivingEntity;"
             )
     )
-    private <T extends LivingEntity> LivingEntity redirectGetClosestEntity(World world, Class<? extends T> entityClass, EntityPredicate targetPredicate, LivingEntity entity, double x, double y, double z, AxisAlignedBB box) {
-        return this.tracker.getClosestEntity(box, targetPredicate);
+    private <T extends LivingEntity> LivingEntity lithium$redirectGetClosestEntity(World world, Class<? extends T> entityClass, EntityPredicate targetPredicate, LivingEntity entity, double x, double y, double z, AxisAlignedBB box) {
+        return this.lithium$tracker.getClosestEntity(box, targetPredicate);
     }
 
     @Redirect(
@@ -44,7 +44,7 @@ public class LookAtGoalMixin {
                     target = "Lnet/minecraft/world/World;getClosestPlayer(Lnet/minecraft/entity/EntityPredicate;Lnet/minecraft/entity/LivingEntity;DDD)Lnet/minecraft/entity/player/PlayerEntity;"
             )
     )
-    private PlayerEntity redirectGetClosestPlayer(World world, EntityPredicate targetPredicate, LivingEntity entity, double x, double y, double z) {
-        return (PlayerEntity) this.tracker.getClosestEntity(null, targetPredicate);
+    private PlayerEntity lithium$redirectGetClosestPlayer(World world, EntityPredicate targetPredicate, LivingEntity entity, double x, double y, double z) {
+        return (PlayerEntity) this.lithium$tracker.getClosestEntity(null, targetPredicate);
     }
 }

@@ -2,7 +2,6 @@ package me.jellysquid.mods.lithium.mixin;
 
 import me.jellysquid.mods.lithium.common.config.LithiumConfig;
 import me.jellysquid.mods.lithium.common.config.Option;
-import net.minecraftforge.fml.ModList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.tree.ClassNode;
@@ -73,17 +72,9 @@ public class LithiumMixinPlugin implements IMixinConfigPlugin {
             }
         }
 
-        if (mixinClassName.contains("mixin.gen.fast_island_noise")) {
-            try {
-                Class.forName("jpg.k.simplyimprovedterrain.SimplyImprovedTerrain", false, LithiumMixinPlugin.class.getClassLoader());
-                return false; //Disable this mixin rule if Simply Improved Terrain is installed.
-            } catch (ClassNotFoundException e) {
-
-            }
-        }
-
         return option.isEnabled();
     }
+
     @Override
     public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
 

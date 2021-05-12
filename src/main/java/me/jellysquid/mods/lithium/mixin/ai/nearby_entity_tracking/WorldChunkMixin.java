@@ -31,9 +31,9 @@ public class WorldChunkMixin {
                     target = "Lnet/minecraft/util/ClassInheritanceMultiMap;add(Ljava/lang/Object;)Z"
             )
     )
-    private void onEntityAdded(Entity entity, CallbackInfo ci) {
+    private void lithium$onEntityAdded(Entity entity, CallbackInfo ci) {
         if (entity instanceof LivingEntity) {
-            EntityTrackerEngineProvider.getEntityTracker(this.world).onEntityAdded(entity.chunkCoordX, entity.chunkCoordY, entity.chunkCoordZ, (LivingEntity) entity);
+            EntityTrackerEngineProvider.lithium$getEntityTracker(this.world).onEntityAdded(entity.chunkCoordX, entity.chunkCoordY, entity.chunkCoordZ, (LivingEntity) entity);
         }
     }
 
@@ -44,9 +44,9 @@ public class WorldChunkMixin {
                     target = "Lnet/minecraft/util/ClassInheritanceMultiMap;remove(Ljava/lang/Object;)Z"
             )
     )
-    private void onEntityRemoved(Entity entity, int section, CallbackInfo ci) {
+    private void lithium$onEntityRemoved(Entity entity, int section, CallbackInfo ci) {
         if (entity instanceof LivingEntity) {
-            EntityTrackerEngineProvider.getEntityTracker(this.world).onEntityRemoved(this.pos.x, section, this.pos.z, (LivingEntity) entity);
+            EntityTrackerEngineProvider.lithium$getEntityTracker(this.world).onEntityRemoved(this.pos.x, section, this.pos.z, (LivingEntity) entity);
         }
     }
 }

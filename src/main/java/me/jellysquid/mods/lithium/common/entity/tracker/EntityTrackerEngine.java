@@ -35,7 +35,7 @@ public class EntityTrackerEngine {
     public void onEntityAdded(int x, int y, int z, LivingEntity entity) {
         if (this.addEntity(x, y, z, entity)) {
             if (entity instanceof NearbyEntityListenerProvider) {
-                this.addListener(x, y, z, ((NearbyEntityListenerProvider) entity).getListener());
+                this.addListener(x, y, z, ((NearbyEntityListenerProvider) entity).lithium$getListener());
             }
         }
     }
@@ -46,7 +46,7 @@ public class EntityTrackerEngine {
     public void onEntityRemoved(int x, int y, int z, LivingEntity entity) {
         if (this.removeEntity(x, y, z, entity)) {
             if (entity instanceof NearbyEntityListenerProvider) {
-                this.removeListener(((NearbyEntityListenerProvider) entity).getListener());
+                this.removeListener(((NearbyEntityListenerProvider) entity).lithium$getListener());
             }
         }
     }
@@ -58,7 +58,7 @@ public class EntityTrackerEngine {
     public void onEntityMoved(int aX, int aY, int aZ, int bX, int bY, int bZ, LivingEntity entity) {
         if (this.removeEntity(aX, aY, aZ, entity) && this.addEntity(bX, bY, bZ, entity)) {
             if (entity instanceof NearbyEntityListenerProvider) {
-                this.moveListener(aX, aY, aZ, bX, bY, bZ, ((NearbyEntityListenerProvider) entity).getListener());
+                this.moveListener(aX, aY, aZ, bX, bY, bZ, ((NearbyEntityListenerProvider) entity).lithium$getListener());
             }
         }
     }

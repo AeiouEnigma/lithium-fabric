@@ -1,5 +1,6 @@
 {
   "package": "me.jellysquid.mods.lithium.mixin",
+  "minVersion": "0.8",
   "required": true,
   "compatibilityLevel": "JAVA_8",
   "plugin": "me.jellysquid.mods.lithium.mixin.LithiumMixinPlugin",

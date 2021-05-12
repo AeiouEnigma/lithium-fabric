@@ -27,7 +27,7 @@ public class ServerWorldMixin {
                     target = "Ljava/util/Iterator;next()Ljava/lang/Object;"
             )
     )
-    private Object onEntityRemoved(Iterator<Entity> iterator) {
+    private Object lithium$onEntityRemoved(Iterator<Entity> iterator) {
         Entity entity = iterator.next();
         if (!(entity instanceof LivingEntity)) {
             return entity;
@@ -37,7 +37,7 @@ public class ServerWorldMixin {
         int chunkY = MathHelper.clamp(MathHelper.floor(entity.getPosY()) >> 4, 0, 15);
         int chunkZ = MathHelper.floor(entity.getPosZ()) >> 4;
 
-        EntityTrackerEngine tracker = EntityTrackerEngineProvider.getEntityTracker(this);
+        EntityTrackerEngine tracker = EntityTrackerEngineProvider.lithium$getEntityTracker(this);
         tracker.onEntityRemoved(chunkX, chunkY, chunkZ, (LivingEntity) entity);
         return entity;
     }

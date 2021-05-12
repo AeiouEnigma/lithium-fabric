@@ -1,5 +1,6 @@
 package me.jellysquid.mods.lithium.common.config;
 
+import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +27,7 @@ public class LithiumConfig {
         this.addMixinRule("ai", true);
         this.addMixinRule("ai.goal", true);
         this.addMixinRule("ai.nearby_entity_tracking", true);
-        this.addMixinRule("ai.nearby_entity_tracking.goals", false); //Compatibility issues
+        this.addMixinRule("ai.nearby_entity_tracking.goals", true);
         this.addMixinRule("ai.pathing", true);
         this.addMixinRule("ai.poi", true);
         this.addMixinRule("ai.poi.fast_init", true);
@@ -77,7 +78,7 @@ public class LithiumConfig {
         this.addMixinRule("gen.cached_generator_settings", true);
         this.addMixinRule("gen.chunk_region", true);
         this.addMixinRule("gen.fast_island_noise", true);
-        this.addMixinRule("gen.fast_layer_sampling", false); //Disabled, causes chunk wall boundaries when loading vanilla saves. Forge-exclusive issue
+        this.addMixinRule("gen.fast_layer_sampling", true);
         this.addMixinRule("gen.fast_multi_source_biomes", true);
         this.addMixinRule("gen.fast_noise_interpolation", true);
         this.addMixinRule("gen.features", true);
@@ -101,7 +102,7 @@ public class LithiumConfig {
 
         this.addMixinRule("world", true);
         this.addMixinRule("world.block_entity_ticking", true);
-        this.addMixinRule("world.block_entity_ticking.collections", false); //Seems not to vibe with other mods
+        this.addMixinRule("world.block_entity_ticking.collections", true);
         this.addMixinRule("world.block_entity_ticking.should_tick_cache", true);
         this.addMixinRule("world.block_entity_ticking.sleeping", true);
         this.addMixinRule("world.block_entity_ticking.support_cache", true);
@@ -111,9 +112,66 @@ public class LithiumConfig {
         this.addMixinRule("world.chunk_tickets", true);
         this.addMixinRule("world.chunk_ticking", true);
         this.addMixinRule("world.explosions", true);
-        this.addMixinRule("world.mob_spawning", false); //Mod incompatibility issue?
+        // mixin.world.mob_spawning May cause game startup freezes with particular other mods on particular java versions?
+        // More testing needed. Issue occurred on Java 11 with Endergetic.
+        this.addMixinRule("world.mob_spawning", true);
         this.addMixinRule("world.player_chunk_tick", true);
         this.addMixinRule("world.tick_scheduler", true);
+
+        this.applyOverridesForModConflicts();
+    }
+
+    /**
+     * @author AeiouEnigma
+     *
+     * Disables mixins that conflict with particular mods when those mods are loaded.
+     *
+     * This should really be a last-resort "fix".
+     */
+    private void applyOverridesForModConflicts() {
+        // Array of modIds for which to disable Lithium mixins, in alphabetical order
+        final String[] modOverrideList = {
+                "performant", "savageandravage", "simplyimprovedterrain"
+        };
+
+        // Array of mixin rules to disable for each of the above modIds
+        final String[][] rulesToOverride = {
+                /* PERFORMANT
+                 *
+                 * Performant is closed-source, and given its goals it probably has its own implementations of Lithium's
+                 * optimizations here anyway.
+                 *
+                 * Just disable conflicting mixins.
+                 */
+                {"gen.features", "world.block_entity_ticking"},
+
+                /* SAVAGE AND RAVAGE
+                 *
+                 * There seems to be a hard-to-pin-down issue of S&R Skeleton Villagers not being assigned Lithium's
+                 * entity trackers. As I understand it, this results in a crash when these entities despawn. We could
+                 * possibly disable the crash in response to this, but I think it's safer to just disable the
+                 * functionality entirely.
+                 */
+                {"ai.nearby_entity_tracking"},
+
+                /* SIMPLY IMPROVED TERRAIN
+                 *
+                 * Simply Improved Terrain Overwrites EndBiomeProvider#getNoiseBiome, and uses its own custom noise functions.
+                 * I don't think it makes sense to try to adapt Lithium's End island noise mixins to be compatible with SIT.
+                 * Better to let SIT do things its way.
+                 */
+                {"gen.fast_island_noise"}
+        };
+
+        // For each of the above modIds that's loaded, override the corresponding mixin rules
+        for (int i = 0; i < modOverrideList.length; i++) {
+            if(FMLLoader.getLoadingModList().getModFileById(modOverrideList[i]) != null) {
+                for (String rule : rulesToOverride[i]) {
+                    this.options.get(getMixinRuleName(rule))
+                            .addModOverride(false, modOverrideList[i]);
+                }
+            }
+        }
     }
 
     /**
@@ -214,7 +272,6 @@ public class LithiumConfig {
                 LOGGER.warn("Could not write default configuration file", e);
             }
         }
-        //config.applyModOverrides();
 
         return config;
     }

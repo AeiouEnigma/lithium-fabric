@@ -1,9 +1,9 @@
 package me.jellysquid.mods.lithium.common.entity.tracker;
 
 public interface EntityTrackerEngineProvider {
-    EntityTrackerEngine getEntityTracker();
+    EntityTrackerEngine lithium$getEntityTracker();
 
-    static EntityTrackerEngine getEntityTracker(Object world) {
-        return world instanceof EntityTrackerEngineProvider ? ((EntityTrackerEngineProvider) world).getEntityTracker() : null;
+    static EntityTrackerEngine lithium$getEntityTracker(Object world) {
+        return world instanceof EntityTrackerEngineProvider ? ((EntityTrackerEngineProvider) world).lithium$getEntityTracker() : null;
     }
 }

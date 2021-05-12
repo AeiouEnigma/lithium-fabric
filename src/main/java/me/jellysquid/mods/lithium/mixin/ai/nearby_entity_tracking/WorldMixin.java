@@ -19,18 +19,18 @@ import java.util.function.Supplier;
  */
 @Mixin(World.class)
 public class WorldMixin implements EntityTrackerEngineProvider {
-    private EntityTrackerEngine tracker;
+    private EntityTrackerEngine lithium$tracker;
 
     /**
      * Initialize the {@link EntityTrackerEngine} which all entities of the world will interact with.
      */
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void init(ISpawnWorldInfo worldInfo, RegistryKey<World> dimension, final DimensionType dimensionType, Supplier<IProfiler> profiler, boolean isRemote, boolean isDebug, long seed, CallbackInfo ci) {
-        this.tracker = new EntityTrackerEngine();
+    private void lithium$init(ISpawnWorldInfo worldInfo, RegistryKey<World> dimension, final DimensionType dimensionType, Supplier<IProfiler> profiler, boolean isRemote, boolean isDebug, long seed, CallbackInfo ci) {
+        this.lithium$tracker = new EntityTrackerEngine();
     }
 
     @Override
-    public EntityTrackerEngine getEntityTracker() {
-        return this.tracker;
+    public EntityTrackerEngine lithium$getEntityTracker() {
+        return this.lithium$tracker;
     }
 }

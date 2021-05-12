@@ -1,9 +1,9 @@
 package me.jellysquid.mods.lithium.common.shapes;
 
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.math.shapes.IBooleanFunction;
 
 /**
  * Provides a simple interface for directly querying intersections against a shape. This can be used instead of the

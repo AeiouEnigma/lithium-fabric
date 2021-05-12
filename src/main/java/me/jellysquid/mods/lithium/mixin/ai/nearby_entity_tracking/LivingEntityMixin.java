@@ -16,18 +16,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin implements NearbyEntityListenerProvider {
-    private NearbyEntityListenerMulti tracker;
+    private NearbyEntityListenerMulti lithium$tracker;
 
     /**
      * Initialize the entity listener.
      */
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void init(EntityType<? extends LivingEntity> type, World world, CallbackInfo ci) {
-        this.tracker = new NearbyEntityListenerMulti();
+    private void lithium$init(EntityType<? extends LivingEntity> type, World world, CallbackInfo ci) {
+        this.lithium$tracker = new NearbyEntityListenerMulti();
     }
 
     @Override
-    public NearbyEntityListenerMulti getListener() {
-        return this.tracker;
+    public NearbyEntityListenerMulti lithium$getListener() {
+        return this.lithium$tracker;
     }
 }

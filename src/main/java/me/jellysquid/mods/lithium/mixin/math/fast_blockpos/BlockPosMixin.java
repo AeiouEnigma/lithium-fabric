@@ -1,7 +1,7 @@
 package me.jellysquid.mods.lithium.mixin.math.fast_blockpos;
 
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3i;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

@@ -24,40 +24,39 @@ public abstract class ScaleLayerMixin {
      * @author gegy1000
      */
     @Overwrite
-    public int apply(IExtendedNoiseRandom<?> context, IArea area, int x, int z) {
+    public int apply(IExtendedNoiseRandom<?> ctx, IArea parent, int x, int z) {
         // [VanillaCopy] ScaleLayer#sample
 
-        int i = area.getValue(this.getOffsetX(x), this.getOffsetZ(z));
-        context.setPosition((long)(x >> 1 << 1), (long)(z >> 1 << 1));
-        int j = x & 1;
-        int k = z & 1;
+        int tl = parent.getValue(this.getOffsetX(x), this.getOffsetZ(z));
+        int ix = x & 1;
+        int iz = z & 1;
 
-        if (j == 0 && k == 0) {
-            return i;
+        if (ix == 0 && iz == 0) {
+            return tl;
         }
 
-        context.pickRandom(x & ~1, z & ~1);
+        ctx.setPosition(x & ~1, z & ~1);
 
-        if (j == 0) {
-            int bl = area.getValue(this.getOffsetX(x), this.getOffsetZ(z + 1));
-            return context.pickRandom(i, bl);
+        if (ix == 0) {
+            int bl = parent.getValue(this.getOffsetX(x), this.getOffsetZ(z + 1));
+            return ctx.pickRandom(tl, bl);
         }
 
-        // move `choose` into above if-statement: maintain rng parity
-        ((CachingLayerContextExtended) context).skipInt();
+        // Move `choose` into above if-statement: maintain rng parity
+        ((CachingLayerContextExtended) ctx).skipInt();
 
-        if (k == 0) {
-            int tr = area.getValue(this.getOffsetX(x + 1), this.getOffsetZ(z));
-            return context.pickRandom(i, tr);
+        if (iz == 0) {
+            int tr = parent.getValue(this.getOffsetX(x + 1), this.getOffsetZ(z));
+            return ctx.pickRandom(tl, tr);
         }
 
-        // move `choose` into above if-statement: maintain rng parity
-        ((CachingLayerContextExtended) context).skipInt();
+        // Move `choose` into above if-statement: maintain rng parity
+        ((CachingLayerContextExtended) ctx).skipInt();
 
-        int l = area.getValue(this.getOffsetX(x), this.getOffsetZ(z + 1));
-        int j1 = area.getValue(this.getOffsetX(x + 1), this.getOffsetZ(z));
-        int l1 = area.getValue(this.getOffsetX(x + 1), this.getOffsetZ(z + 1));
+        int bl = parent.getValue(this.getOffsetX(x), this.getOffsetZ(z + 1));
+        int tr = parent.getValue(this.getOffsetX(x + 1), this.getOffsetZ(z));
+        int br = parent.getValue(this.getOffsetX(x + 1), this.getOffsetZ(z + 1));
 
-        return this.pickZoomed(context, i, j1, l, l1);
+        return this.pickZoomed(ctx, tl, tr, bl, br);
     }
 }

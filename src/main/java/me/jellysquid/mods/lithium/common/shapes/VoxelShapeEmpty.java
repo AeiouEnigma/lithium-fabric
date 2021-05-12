@@ -5,8 +5,8 @@ import it.unimi.dsi.fastutil.doubles.DoubleList;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapePart;
 import net.minecraft.util.math.shapes.VoxelShapeCube;
+import net.minecraft.util.math.shapes.VoxelShapePart;
 
 /**
  * An efficient implementation of {@link VoxelShape} for a shape with no vertices. Vanilla normally represents this
