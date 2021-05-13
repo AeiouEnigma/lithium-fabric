@@ -143,7 +143,9 @@ public class LithiumConfig {
                  *
                  * Just disable conflicting mixins.
                  */
-                {"gen.features", "world.block_entity_ticking"},
+                {"ai.nearby_entity_tracking.goals", "ai.poi.fast_retrieval", "collections.entity_filtering", "entity.collisions",
+                 "entity.data_tracker.use_arrays", "gen.features", "world.block_entity_ticking", "world.chunk_tickets",
+                 "world.chunk_ticking", "world.player_chunk_tick"},
 
                 /* SAVAGE AND RAVAGE
                  *
