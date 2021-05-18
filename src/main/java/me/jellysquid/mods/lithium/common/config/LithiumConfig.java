@@ -125,17 +125,35 @@ public class LithiumConfig {
      * @author AeiouEnigma
      *
      * Disables mixins that conflict with particular mods when those mods are loaded.
+     * Inclusion of a mod in this list DOES NOT CONSTITUTE a statement of compatibility with Lithium.
      *
      * This should really be a last-resort "fix".
      */
     private void applyOverridesForModConflicts() {
         // Array of modIds for which to disable Lithium mixins, in alphabetical order
         final String[] modOverrideList = {
-                "performant", "savageandravage", "simplyimprovedterrain"
+                "farlandsmod", /*"jmt_mcmt",*/ "performant", "savageandravage", "simplyimprovedterrain"
         };
 
         // Array of mixin rules to disable for each of the above modIds
         final String[][] rulesToOverride = {
+                /* FAR LANDS MOD
+                 *
+                 * ai.poi.fast_retrieval causes crashes at extreme distances (beyond vanilla maximum world border)
+                 * The other disabled mixins cause the far lands to not generate.
+                 */
+                {"ai.poi.fast_retrieval", "gen.fast_noise_interpolation", "gen.perlin_noise"},
+
+                /* MCMT
+                 *
+                 * With MCMT installed, world.chunk_access must be disabled to allow loading worlds.
+                 * alloc.chunk_random has to be disabled to prevent the world from bursting into flame :concern:
+                 *
+                 * Lithium absolutely should not be used with MCMT installed but, for people who want to attempt to
+                 * combine them, at least worlds shouldn't burn.
+                 */
+                {"alloc.chunk_random", "world.chunk_access"},
+
                 /* PERFORMANT
                  *
                  * Performant is closed-source, and given its goals it probably has its own implementations of Lithium's
@@ -143,16 +161,14 @@ public class LithiumConfig {
                  *
                  * Just disable conflicting mixins.
                  */
-                {"ai.nearby_entity_tracking.goals", "ai.poi.fast_retrieval", "collections.entity_filtering", "entity.collisions",
-                 "entity.data_tracker.use_arrays", "gen.features", "world.block_entity_ticking", "world.chunk_tickets",
-                 "world.chunk_ticking", "world.player_chunk_tick"},
+                {"ai.nearby_entity_tracking.goals", "ai.poi.fast_retrieval", "collections.entity_filtering",
+                 "entity.collisions", "entity.data_tracker.use_arrays", "gen.features", "world.block_entity_ticking",
+                 "world.chunk_tickets", "world.chunk_ticking", "world.player_chunk_tick"},
 
                 /* SAVAGE AND RAVAGE
                  *
-                 * There seems to be a hard-to-pin-down issue of S&R Skeleton Villagers not being assigned Lithium's
-                 * entity trackers. As I understand it, this results in a crash when these entities despawn. We could
-                 * possibly disable the crash in response to this, but I think it's safer to just disable the
-                 * functionality entirely.
+                 * There seems to be a hard-to-pin-down issue involving Lithium's trackers being applied to Villagers
+                 * when Savage and Ravage is installed, which results in a crash. I wish I understood the problem better.
                  */
                 {"ai.nearby_entity_tracking"},
 
