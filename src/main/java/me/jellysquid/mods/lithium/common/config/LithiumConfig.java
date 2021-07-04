@@ -128,11 +128,13 @@ public class LithiumConfig {
      * Inclusion of a mod in this list DOES NOT CONSTITUTE a statement of compatibility with Lithium.
      *
      * This should really be a last-resort "fix".
+     *
+     * TODO: This is not a good long-term solution.
      */
     private void applyOverridesForModConflicts() {
         // Array of modIds for which to disable Lithium mixins, in alphabetical order
         final String[] modOverrideList = {
-                "farlandsmod", /*"jmt_mcmt",*/ "performant", "savageandravage", "simplyimprovedterrain"
+                "farlandsmod", "jmt_mcmt", "performant", "ravageandcabbage", "savageandravage", "simplyimprovedterrain"
         };
 
         // Array of mixin rules to disable for each of the above modIds
@@ -165,12 +167,12 @@ public class LithiumConfig {
                  "entity.collisions", "entity.data_tracker.use_arrays", "gen.features", "world.block_entity_ticking",
                  "world.chunk_tickets", "world.chunk_ticking", "world.player_chunk_tick"},
 
-                /* SAVAGE AND RAVAGE
+                /* RAVAGE AND CABBAGE; SAVAGE AND RAVAGE
                  *
                  * There seems to be a hard-to-pin-down issue involving Lithium's trackers being applied to Villagers
                  * when Savage and Ravage is installed, which results in a crash. I wish I understood the problem better.
                  */
-                {"ai.nearby_entity_tracking"},
+                {"ai.nearby_entity_tracking"}, {"ai.nearby_entity_tracking"},
 
                 /* SIMPLY IMPROVED TERRAIN
                  *
