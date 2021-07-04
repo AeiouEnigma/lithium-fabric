@@ -59,6 +59,7 @@ public abstract class ExplosionMixin {
     @Shadow
     @Final
     private boolean causesFire;
+
     // The cached mutable block position used during block traversal.
     private final BlockPos.Mutable cachedPos = new BlockPos.Mutable();
 
@@ -80,7 +81,18 @@ public abstract class ExplosionMixin {
             at = @At("TAIL")
     )
     private void init(World world, Entity entity, DamageSource damageSource, ExplosionContext explosionBehavior, double d, double e, double f, float g, boolean bl, Explosion.Mode destructionType, CallbackInfo ci) {
-        this.explodeAirBlocks = this.causesFire; // air blocks are only relevant for the explosion when fire should be created inside them
+
+        boolean explodeAir = this.causesFire; // air blocks are only relevant for the explosion when fire should be created inside them
+        if (!explodeAir && this.world.getDimensionType().doesHasDragonFight()) {
+            float overestimatedExplosionRange = (8 + (int) (6f * this.size));
+            int endPortalX = 0;
+            int endPortalZ = 0;
+            if(overestimatedExplosionRange > Math.abs(this.x - endPortalX) && overestimatedExplosionRange > Math.abs(this.z - endPortalZ)) {
+                explodeAir = true;
+                // exploding air works around accidentally fixing vanilla bug: an explosion cancelling the dragon fight start can destroy the newly placed end portal
+            }
+        }
+        this.explodeAirBlocks = explodeAir;
     }
 
     @Redirect(
