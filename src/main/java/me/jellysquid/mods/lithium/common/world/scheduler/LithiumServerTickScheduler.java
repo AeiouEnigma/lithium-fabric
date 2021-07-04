@@ -99,8 +99,10 @@ public class LithiumServerTickScheduler<T> extends ServerTickList<T> {
 
     @Override
     public List<NextTickListEntry<T>> getPending(ChunkPos chunkPos, boolean mutates, boolean getStaleTicks) {
-        MutableBoundingBox box = new MutableBoundingBox(chunkPos.getXStart() - 2, 0, chunkPos.getZStart() - 2,
-                chunkPos.getXEnd() + 2, 256, chunkPos.getZEnd() + 2);
+        //[VanillaCopy] bug chunk steals ticks from neighboring chunk on unload + does so only in the negative direction
+        MutableBoundingBox box = new MutableBoundingBox(chunkPos.getXStart() - 2, Integer.MIN_VALUE, chunkPos.getZStart() - 2,
+                chunkPos.getXStart() + 16,Integer.MAX_VALUE, chunkPos.getZStart() + 16);
+
         return this.getPending(box, mutates, getStaleTicks);
     }
 
