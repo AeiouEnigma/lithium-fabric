@@ -16,7 +16,7 @@ apply plugin: 'maven-publish'
 apply plugin: "org.spongepowered.mixin"
 
 archivesBaseName = "${project.archives_base_name}-mc${project.minecraft_version}"
-version = "${project.mod_version}-build_${project.build_number}"
+version = "${project.mod_version}+rev.${project.revision_number}"
 group = project.maven_group
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
