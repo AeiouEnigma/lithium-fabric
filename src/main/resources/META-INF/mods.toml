@@ -23,14 +23,16 @@ displayName="Lithium (Forge)" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 #updateJSONURL="http://myurl.me/" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="https://jellysquid.me" #optional
+displayURL="https://github.com/AeiouEnigma/lithium-forge" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="icon.png" #optional
 # A text field displayed in the mod UI
-credits="Pannoniae, AeiouEnigma" #optional
+credits="AeiouEnigma, Pannoniae" #optional
 # A text field displayed in the mod UI
 authors="JellySquid" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 Lithium is a modern, general-purpose optimization mod for Minecraft which works to improve a number of systems (game physics, mob AI, block ticking, etc) with the goal of not changing any vanilla mechanics.
+
+This is an unofficial Forge port maintained by AeiouEnigma. Releases are posted on GitHub.
 '''
